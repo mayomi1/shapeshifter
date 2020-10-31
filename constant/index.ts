@@ -12,3 +12,7 @@ export const SHAPES = [
     value: 'square'
   }
 ];
+
+export const storageKeys = {
+  shapes: 'shapes'
+};

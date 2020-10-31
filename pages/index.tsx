@@ -1,23 +1,38 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Head from 'next/head';
 import { SketchPicker } from 'react-color';
 
 import styles from '../styles/Home.module.css'
-import {SHAPES} from "../constant";
+import {SHAPES, storageKeys} from "../constant";
 import {useFormSubmission} from "../lib/useForm";
 
+
+let savedShaped;
+
+if (typeof window !== "undefined") {
+  savedShaped = window.localStorage.getItem(storageKeys.shapes)
+}
 export default function Home() {
   const [selectedColor, setSelectedColor] = useState<string>();
   const [generatedShapes, setGeneratedShapes] = useState([]);
+
+
+  const theShapes = savedShaped && JSON.parse(savedShaped) || [];
 
   const generateShape = (payload) => {
     generatedShapes.push({
       shape: payload.shape, width: payload.width, height: payload.height, color: selectedColor
     })
+    const toSave = generatedShapes.concat(theShapes)
+    window.localStorage.setItem(storageKeys.shapes, JSON.stringify(toSave));
+
+    window.location.reload();
   };
 
-  console.log(generatedShapes);
-
+  const clearShape = () => {
+    window.localStorage.removeItem(storageKeys.shapes);
+    window.location.reload();
+  }
   const {submit} = useFormSubmission();
   return (
     <>
@@ -32,7 +47,9 @@ export default function Home() {
             Welcome to shape shifter
           </h1>
 
-          <form onSubmit={(e) => submit(e, (payload) => generateShape(payload))}>
+          <form onSubmit={(e) => submit(e, (payload) => generateShape(payload))}
+                onReset={() => clearShape()}
+          >
             <div>
               <div>
                 <label>Shape type</label>
@@ -65,6 +82,7 @@ export default function Home() {
               </div>
 
               <button type='submit'>Generate Shape</button>
+              <button type='reset'>Clear shapes</button>
             </div>
           </form>
 
@@ -72,7 +90,7 @@ export default function Home() {
           {/*show shape*/}
           <div>
             {
-              generatedShapes.map((generatedShape: any, i) => (
+              Array.isArray(theShapes) && theShapes?.map((generatedShape: any, i) => (
                 <Shape
                   width={generatedShape.width}
                   height={generatedShape.height}
