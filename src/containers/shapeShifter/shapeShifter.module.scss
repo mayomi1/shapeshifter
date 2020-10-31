@@ -1,0 +1,83 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  margin: 50px 50px
+}
+
+.shapeDescriptions {
+  display: flex;
+  flex-direction: column;
+  border: 2px #222222 solid;
+  height: 710px;
+  padding: 20px;
+
+  h3 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+  }
+}
+
+.shapeView {
+  overflow: auto;
+  border: 2px #222222 solid;
+  border-radius: 21px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-left: 21px;
+}
+
+.selectionInput {
+  margin: 0 20px 20px 0;
+  width: 200px;
+  height: 40px;
+  padding: 8px 10px;
+  background: #fff;
+  border: 2px solid #222222;
+  box-sizing: border-box;
+
+  select, input {
+    border: none;
+    width: 100%;
+    font-size: 12px;
+    text-transform: capitalize;
+    outline: none;
+  }
+}
+
+.label {
+  font-size: 12px;
+  font-weight: normal;
+  color: #222222;
+  padding-bottom: 3px;
+}
+
+.btnWrapper {
+  margin-top: 25px;
+  display: flex;
+}
+
+.marginRight10 {
+  margin-right: 15px;
+}
+
+.primaryBtn {
+  background: #222222;
+  width: 109px;
+  height: 39px;
+  border: none;
+  color: #ffffff;
+}
+
+.secondaryBtn {
+  width: 90px;
+  height: 39px;
+  border: 2px solid #222222;
+  background-color: #ffffff;
+}
