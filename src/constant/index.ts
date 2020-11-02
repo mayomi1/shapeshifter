@@ -10,6 +10,10 @@ export const SHAPES = [
   {
     label: 'Square',
     value: 'square'
+  },
+  {
+    label: 'Parallelogram',
+    value: 'parallelogram'
   }
 ];
 

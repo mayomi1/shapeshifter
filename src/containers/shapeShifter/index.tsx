@@ -11,13 +11,19 @@ import {composeClasses} from "../../lib/utils";
 
 let savedShaped;
 
+export interface IShape {
+  shape: string;
+  width: string;
+  height?: string;
+  color: string;
+}
+
 if (typeof window !== "undefined") {
   savedShaped = window.localStorage.getItem(storageKeys.shapes)
 }
 
 const Home: React.FC<{}> = () => {
-
-  const theShapes = savedShaped && JSON.parse(savedShaped) || [];
+  const shapes = savedShaped && JSON.parse(savedShaped) || [];
   return (
     <>
       <div className={styles.container}>
@@ -30,8 +36,8 @@ const Home: React.FC<{}> = () => {
           <Header />
 
           <section className={styles.content}>
-            <ShapeDescription theShapes={theShapes} />
-            <ShapeView theShapes={theShapes} />
+            <ShapeDescription shapes={shapes} />
+            <ShapeView shapes={shapes} />
           </section>
         </main>
       </div>
@@ -39,16 +45,21 @@ const Home: React.FC<{}> = () => {
   )
 };
 
-const ShapeDescription: React.FC<{theShapes: any}> = ({theShapes}) => {
+const ShapeDescription: React.FC<{shapes: IShape[]}> = ({shapes}) => {
   const [selectedColor, setSelectedColor] = useState<string>();
+  const [error, setError] = useState('');
 
   const generateShape = (payload) => {
+    if (!selectedColor) {
+      setError('Please choose a color');
+      return
+    }
     const generatedShapes = [];
     generatedShapes.push({
       shape: payload.shape, width: payload.width, height: payload.height, color: selectedColor
     });
 
-    const toSave = generatedShapes.concat(theShapes)
+    const toSave = generatedShapes.concat(shapes);
     window.localStorage.setItem(storageKeys.shapes, JSON.stringify(toSave));
 
     window.location.reload();
@@ -61,9 +72,11 @@ const ShapeDescription: React.FC<{theShapes: any}> = ({theShapes}) => {
 
   const {submit} = useFormSubmission();
 
+  const [selectedShape, setSelectedShape] = useState('');
+
   return (
     <div className={styles.shapeDescriptions}>
-      <h3>Enter your shape descriptions</h3>
+      <h3>Enter your shape descriptions (<em>All units are in pixels(px)</em>)</h3>
 
       <form
         onSubmit={(e) => submit(e, (payload) => generateShape(payload))}
@@ -73,8 +86,8 @@ const ShapeDescription: React.FC<{theShapes: any}> = ({theShapes}) => {
           <div>
             <label className={styles.label}>Shape type</label>
             <div className={styles.selectionInput}>
-              <select name='shape'>
-                <option value='Choose shape'>Choose shape</option>
+              <select name='shape' onChange={(e) => setSelectedShape(e.target.value)}>
+                <option value=''>Choose shape</option>
                 {
                   SHAPES.map((shape, i) => (
                     <option key={i} value={shape.value}>{shape.label}</option>
@@ -84,32 +97,62 @@ const ShapeDescription: React.FC<{theShapes: any}> = ({theShapes}) => {
             </div>
           </div>
 
-          <div>
-            <label className={styles.label}>Width</label>
-            <div className={styles.selectionInput}>
-              <input name='width' placeholder='enter the width' />
-            </div>
-          </div>
+          {
+            selectedShape !== '' && (selectedShape === 'circle' ?
+              <div>
+                <label className={styles.label}>Radius</label>
+                <div className={styles.selectionInput}>
+                  <input name='width' placeholder='enter the Radius' />
+                </div>
+              </div>
+              :
+              selectedShape === 'square' ?
+                <div>
+                  <label className={styles.label}>Width</label>
+                  <div className={styles.selectionInput}>
+                      <input name='width' placeholder='enter the width' />
+                  </div>
+                </div>
+                :
+                <>
+                  <div>
+                    <label className={styles.label}>Width</label>
+                    <div className={styles.selectionInput}>
+                      <input name='width' placeholder='enter the width' />
+                    </div>
+                  </div>
 
-          <div>
-            <label className={styles.label}>Height</label>
-            <div className={styles.selectionInput}>
-              <input name='height' placeholder='enter the height'/>
-            </div>
-          </div>
+                  <div>
+                    <label className={styles.label}>Height</label>
+                    <div className={styles.selectionInput}>
+                      <input name='height' placeholder='enter the height'/>
+                    </div>
+                  </div>
+                </>)
+          }
 
-          <div>
-            <label className={styles.label}>Pick colour</label>
-            <SketchPicker
-              color={selectedColor}
-              onChangeComplete={(selectedColor) => setSelectedColor(selectedColor.hex)}
-            />
-          </div>
+          {
+            selectedShape !== '' &&
+              <>
+                <div>
+                  <label className={styles.label}>Pick colour</label>
+                  <SketchPicker
+                      color={selectedColor}
+                      onChangeComplete={(selectedColor) => setSelectedColor(selectedColor.hex)}
+                  />
+                </div>
 
-          <div className={styles.btnWrapper}>
-            <button type='submit' className={composeClasses(styles.primaryBtn, styles.marginRight10)}>Generate</button>
-            <button type='reset' className={styles.secondaryBtn}>Clear</button>
-          </div>
+                {
+                  error !== '' && <div className={styles.errorMsg}>{error}</div>
+                }
+
+                <div className={styles.btnWrapper}>
+                  <button type='submit' className={composeClasses(styles.primaryBtn, styles.marginRight10)}>Generate</button>
+                  <button type='reset' className={styles.secondaryBtn}>Clear</button>
+                </div>
+              </>
+          }
+
         </div>
       </form>
 
@@ -117,12 +160,13 @@ const ShapeDescription: React.FC<{theShapes: any}> = ({theShapes}) => {
   )
 }
 
-const ShapeView: React.FC<{theShapes: any}> = ({theShapes}) => {
+const ShapeView: React.FC<{shapes: IShape[]}> = ({shapes}) => {
   return (
     <div className={styles.shapeView}>
       {
-        Array.isArray(theShapes) && theShapes?.map((generatedShape: any, i) => (
+        Array.isArray(shapes) && shapes?.map((generatedShape: any, i) => (
           <Shape
+            key={i}
             width={generatedShape.width}
             height={generatedShape.height}
             color={generatedShape.color}

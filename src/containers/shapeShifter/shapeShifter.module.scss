@@ -31,6 +31,7 @@
   flex-direction: column;
   width: 100%;
   margin-left: 21px;
+  padding: 100px;
 }
 
 .selectionInput {
@@ -59,7 +60,7 @@
 }
 
 .btnWrapper {
-  margin-top: 25px;
+  margin-top: 15px;
   display: flex;
 }
 
@@ -80,4 +81,9 @@
   height: 39px;
   border: 2px solid #222222;
   background-color: #ffffff;
+}
+
+.errorMsg {
+  padding-top: 5px;
+  color: red;
 }

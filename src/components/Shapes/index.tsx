@@ -8,7 +8,7 @@ export const Shape = ({width, height, color, shape}) => {
       <style jsx>{`
         .square {
           width: ${width}px;
-          height: ${height}px;
+          height: ${width}px;
           background: ${color};
           animation-name: easeIn;
           animation-duration: 4s;
@@ -30,6 +30,14 @@ export const Shape = ({width, height, color, shape}) => {
           animation-name: easeIn;
           animation-duration: 4s;
         }
+        
+        .parallelogram {
+          width: ${width}px;
+          height: ${height}px;
+          transform: skew(20deg);
+          background: ${color};
+        }
+        
         
         @keyframes easeIn {
           0% { 
